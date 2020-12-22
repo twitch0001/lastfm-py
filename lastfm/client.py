@@ -5,8 +5,9 @@ URL = "https://ws.audioscrobbler.com/2.0/"
 
 
 class LastFMException(Exception):
-    def __init__(self, error, message)
-        pass
+    def __init__(self, error_code, message):
+        self.error_code = error_code
+        self.message = message
 
 
 class InvalidParamaters(LastFMException):
