@@ -21,7 +21,7 @@ py -m pip install -U lastfm-py
 import lastfm
 import asyncio
 
-client = lastfm.Client('client_secret', 'client_key') # Replace with your credentials
+client = lastfm.Client('client_key') # Replace with your client key (client_secret is optional)
 
 async def main():
     recent_tracks = await client.get_recent_tracks("username", limit=5)
