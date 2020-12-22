@@ -1,22 +1,8 @@
 import aiohttp
 from . import __version__
+from .errors import LastFMException, mapping
 
 URL = "https://ws.audioscrobbler.com/2.0/"
-
-
-class LastFMException(Exception):
-    def __init__(self, error_code, message):
-        self.error_code = error_code
-        self.message = message
-
-
-class InvalidParamaters(LastFMException):
-    pass
-
-
-error_mapping = {
-    6: InvalidParamaters
-}
 
 
 class Request:
@@ -57,14 +43,31 @@ class Client:
         params.update(request.extra)  # Update with method specific params
         async with self._session.request(request.method, URL, params=params) as response:
             data = await json_or_text(response)
+            print(response.status)
             
-            if 200 < response.status < 300:
+            if 200 <= response.status < 300:
                 return data
 
             error = data.get("error") 
             if error:
-                raise error_mapping.get(error, LastFMException)(error, data.get("message"))
-            
+                raise mapping.get(error, LastFMException)(error, data.get("message"))
+        
+            return data
+
+    # > User methods <
+    async def get_info(self, user: str=None):
+        """user.getInfo - user defaults to session auth"""
+        return await self._request(Request("GET", "user.getInfo", user=user))
 
     async def get_recent_tracks(self, user: str, *, limit: int=10):
         return await self._request(Request("GET", "user.getRecentTracks", user=user, limit=limit))
+    
+    async def get_top_tracks(self, user: str, period: str=None, *, limit: int=10, page: int=0):
+        return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit))
+
+    async def get_top_artists(self, user: str, period: str=None, *, limit: int=10, page: int=0):
+        return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit))
+
+    async def get_top_albums(self, user: str, period: str=None, *, limit: int=10, page: int=0):
+        return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit))
+
