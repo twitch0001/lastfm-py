@@ -55,18 +55,69 @@ class Client:
             return data
 
     # > User methods <
-    async def get_info(self, user: str = None):
-        """user.getInfo - user defaults to session auth"""
-        return await self._request(Request("GET", "user.getInfo", user=user))
+    # TODO: find an alternative to prefixing all methods with user_
+    async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1):
+        return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=recent_tracks, limit=limit, page=page))
 
-    async def get_recent_tracks(self, user: str, *, limit: int = 10):
-        return await self._request(Request("GET", "user.getRecentTracks", user=user, limit=limit))
+    async def user_get_info(self, user: str, **extra):
+        # TODO: Find better way of pasing track & artist
+        return await self._request(Request("GET", "user.getInfo", user=user, **extra))
 
-    async def get_top_tracks(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
-        return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit))
+    async def user_get_loved_tracks(self, user: str, *, limit: int = 50, page: int = 1):
+        return await self._request(Request("GET", "user.getLovedTracks", user=user, limit=limit, page=page))
 
-    async def get_top_artists(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
-        return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit))
+    async def user_get_personal_tags(self, user: str, tag: str, *, limit: int = 50, page: int = 1, **extra):
+        fields = {
+            "user": user,
+            "tag": tag,
+            "limit": limit,
+            "page": page
+        }
+        if "tagging_type" in extra:
+            fields["taggingtype"] = extra["tagging_type"]
 
-    async def get_top_albums(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
-        return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit))
+        return await self._request(Request("GET", "user.getPersonalTags", **fields))
+
+    async def user_get_recent_tracks(self, user: str, *, limit: int = 10, page: int = 1, extended: bool = False, **extra):
+        # TODO: explore other options?
+        fields = {
+            "user": user,
+            "limit": limit,
+            "page": page,
+            "extended": extended
+        }
+        if "from" in extra:
+            fields["from"] = extra["from"]
+
+        if "to" in extra:
+            fields["to"] = extra["to"]
+
+        return await self._request(Request("GET", "user.getRecentTracks", **fields))
+
+    async def user_get_top_albums(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
+        return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit, period=period, page=page))
+
+    async def user_get_top_artists(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
+        return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit, period=period, page=page))
+
+    async def user_get_top_tags(self, user: str, *, limit: int = 50):
+        return await self._request(Request("GET", "user.getTopTags", user=user, limit=limit))
+
+    async def user_get_top_tracks(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
+        return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
+
+    async def user_get_weekly_album_chart(self, user: str, *, limit: int = 10, page: int = 0, **extra):
+        # TODO: explore other options?
+        fields = {
+            "user": user,
+            "limit": limit,
+            "page": page,
+        }
+        if "from" in extra:
+            fields["from"] = extra["from"]
+
+        if "to" in extra:
+            fields["to"] = extra["to"]
+
+        return await self._request(Request("GET", "user.getWeeklyAlbumChart", **fields))
+
