@@ -4,13 +4,16 @@ class LastFMException(Exception):
         self.error_code = error_code
         self.message = message
 
+
 class InvalidParamaters(LastFMException):
     """An invalid paramater has been passed"""
     pass
 
+
 class OperationFailed(LastFMException):
     """A server side error has occurred"""
     pass
+
 
 mapping = {
     6: InvalidParamaters,
