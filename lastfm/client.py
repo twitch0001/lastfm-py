@@ -125,3 +125,11 @@ class Client:
             fields["to"] = extra["to"]
 
         return await self._request(Request("GET", "user.getWeeklyAlbumChart", **fields))
+
+    async def track_get_info(self, **fields):
+        valid_fields = ("track", "artist", "mbid", "username", "autocorrect")
+        params = {
+            k: v for k, v in fields.items() if k in valid_fields
+        }
+        return await self._request(Request("GET", "track.getInfo", **params))
+
