@@ -1,6 +1,11 @@
+import logging
+
 import aiohttp
+
 from . import __version__
 from .errors import LastFMException, mapping
+
+log = logging.getLogger(__name__)
 
 URL = "https://ws.audioscrobbler.com/2.0/"
 
@@ -36,15 +41,15 @@ class Client:
         }
 
         params = {
-            "format": "json",
+            "format": "json",  # Would prefer content-type over a query param
             "api_key": self._key,
             "method": request.path
         }
         params.update(request.extra)  # Update with method specific params
         async with self._session.request(request.method, URL, headers=headers, params=params) as response:
             data = await json_or_text(response)
-            print(response.status)
-
+            log.debug("Method: %s returned status: %s data: %s", request.path, response.status, data)
+            # TODO: check if errors still exist with 200 status
             if 200 <= response.status < 300:
                 return data
 
@@ -60,7 +65,7 @@ class Client:
         return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=recent_tracks, limit=limit, page=page))
 
     async def user_get_info(self, user: str, **extra):
-        # TODO: Find better way of pasing track & artist
+        # TODO: Find better way of passing track & artist
         return await self._request(Request("GET", "user.getInfo", user=user, **extra))
 
     async def user_get_loved_tracks(self, user: str, *, limit: int = 50, page: int = 1):
@@ -84,7 +89,7 @@ class Client:
             "user": user,
             "limit": limit,
             "page": page,
-            "extended": extended
+            "extended": str(extended)  # query params cannot be booleans because
         }
         if "from" in extra:
             fields["from"] = extra["from"]
@@ -120,4 +125,3 @@ class Client:
             fields["to"] = extra["to"]
 
         return await self._request(Request("GET", "user.getWeeklyAlbumChart", **fields))
-
