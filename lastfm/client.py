@@ -62,7 +62,7 @@ class Client:
     # > User methods <
     # TODO: find an alternative to prefixing all methods with user_
     async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1):
-        return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=recent_tracks, limit=limit, page=page))
+        return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=str(recent_tracks), limit=limit, page=page))
 
     async def user_get_info(self, user: str, **extra):
         # TODO: Find better way of passing track & artist
@@ -99,16 +99,16 @@ class Client:
 
         return await self._request(Request("GET", "user.getRecentTracks", **fields))
 
-    async def user_get_top_albums(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
+    async def user_get_top_albums(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 0):
         return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit, period=period, page=page))
 
-    async def user_get_top_artists(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
+    async def user_get_top_artists(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 0):
         return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit, period=period, page=page))
 
     async def user_get_top_tags(self, user: str, *, limit: int = 50):
         return await self._request(Request("GET", "user.getTopTags", user=user, limit=limit))
 
-    async def user_get_top_tracks(self, user: str, period: str = None, *, limit: int = 10, page: int = 0):
+    async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 0):
         return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
 
     async def user_get_weekly_album_chart(self, user: str, *, limit: int = 10, page: int = 0, **extra):
@@ -126,10 +126,17 @@ class Client:
 
         return await self._request(Request("GET", "user.getWeeklyAlbumChart", **fields))
 
-    async def track_get_info(self, **fields):
+    def _track_shortcut(self, method, **fields):
         valid_fields = ("track", "artist", "mbid", "username", "autocorrect")
         params = {
             k: v for k, v in fields.items() if k in valid_fields
         }
-        return await self._request(Request("GET", "track.getInfo", **params))
+        return self._request(Request("GET", method, **params))
+    
+    async def track_get_info(self, **fields):
+        return await self._track_shortcut("track.getInfo", **fields) 
+    
+    async def track_get_similar(self, **fields):
+        return await self._track_shortcut("track.getSimilar", **fields) 
+
 
