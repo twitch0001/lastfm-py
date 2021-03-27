@@ -99,19 +99,19 @@ class Client:
 
         return await self._request(Request("GET", "user.getRecentTracks", **fields))
 
-    async def user_get_top_albums(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 0):
+    async def user_get_top_albums(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
         return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit, period=period, page=page))
 
-    async def user_get_top_artists(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 0):
+    async def user_get_top_artists(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
         return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit, period=period, page=page))
 
     async def user_get_top_tags(self, user: str, *, limit: int = 50):
         return await self._request(Request("GET", "user.getTopTags", user=user, limit=limit))
 
-    async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 0):
+    async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
         return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
 
-    async def user_get_weekly_album_chart(self, user: str, *, limit: int = 10, page: int = 0, **extra):
+    async def user_get_weekly_album_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
         # TODO: explore other options?
         fields = {
             "user": user,
