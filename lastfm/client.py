@@ -25,6 +25,16 @@ async def json_or_text(response):
 
 
 class Client:
+    """Client for making requests to Last.FM
+
+    Parameters 
+    ----------
+    client_key: str
+        Your Last.fm key
+    client_secret: Optional[str]
+        Your Last.fm secret. Only used for User authentication (TODO)
+    """
+
     def __init__(self, client_key: str, client_secret: str = None):
         self._key = client_key
         self._secret = client_secret
@@ -64,9 +74,8 @@ class Client:
     async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1):
         return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=str(recent_tracks), limit=limit, page=page))
 
-    async def user_get_info(self, user: str, **extra):
-        # TODO: Find better way of passing track & artist
-        return await self._request(Request("GET", "user.getInfo", user=user, **extra))
+    async def user_get_info(self, user: str):
+        return await self._request(Request("GET", "user.getInfo", user=user))
 
     async def user_get_loved_tracks(self, user: str, *, limit: int = 50, page: int = 1):
         return await self._request(Request("GET", "user.getLovedTracks", user=user, limit=limit, page=page))
