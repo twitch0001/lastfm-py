@@ -155,4 +155,18 @@ class Client:
         }
         return await self._request(Request("GET", "artist.getInfo", **params))
     
+    async def album_get_info(self, **fields):
+        valid_fields = ("album", "artist", "mbid", "username", "autocorrect", "lang")
+        params = {
+            k: v for k, v in fields.items() if k in valid_fields
+        }
+        return await self._request(Request("GET", "album.getInfo", **params))
+
+    async def album_get_top_tags(self, **fields):
+        valid_fields = ("album", "artist", "mbid", "autocorrect")
+        params = {
+            k: v for k, v in fields.items() if k in valid_fields
+        }
+        return await self._request(Request("GET", "album.getTopTags", **params))
+
 
