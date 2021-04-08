@@ -169,4 +169,6 @@ class Client:
         }
         return await self._request(Request("GET", "album.getTopTags", **params))
 
+    async def album_get_top_tags(self, album: str, *, limit: int = 30, page: int = 1):
+        return await self._request(Request("GET", "album.Search", album=album, limit=limit, page=page))
 
