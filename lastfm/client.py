@@ -19,7 +19,7 @@ class Request:
 
 
 async def json_or_text(response):
-    if response.headers["Content-Type"] == "application/json":
+    if response.headers["Content-Type"] in ("application/json", "application/json; charset=UTF-8")  # pain...
         return await response.json()
     return await response.text()
 
