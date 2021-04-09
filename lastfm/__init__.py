@@ -1,5 +1,5 @@
 __author__ = "twitch7443"
-__version__ = "0.0.10"
+__version__ = "0.0.11"
 
 from .client import Client
 from .errors import *
