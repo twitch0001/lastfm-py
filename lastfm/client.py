@@ -148,6 +148,18 @@ class Client:
     async def track_get_similar(self, **fields):
         return await self._track_shortcut("track.getSimilar", **fields) 
 
+    async def track_search(self, track: str, *, limit: int = 30, page: int = 1, **extra):
+        fields = {
+            "track": track,
+            "page": page,
+            "limit": limit
+        }
+
+        if "artist" in extra:
+            fields["artist"] = extra["artist"]
+
+        return await self._request(Request("GET", "track.Search", **fields))
+
     async def artist_get_info(self, **fields):     
         valid_fields = ("track", "artist", "mbid", "username", "autocorrect")
         params = {
