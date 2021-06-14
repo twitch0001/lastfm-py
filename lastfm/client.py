@@ -100,8 +100,8 @@ class Client:
             "page": page,
             "extended": str(extended)  # query params cannot be booleans because
         }
-        if "from" in extra:
-            fields["from"] = extra["from"]
+        if "start" in extra: 
+            fields["from"] = extra["start"]
 
         if "to" in extra:
             fields["to"] = extra["to"]
