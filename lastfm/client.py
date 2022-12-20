@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 URL = "https://ws.audioscrobbler.com/2.0/"
 
 
+# https://github.com/Rapptz/discord.py/blob/6265723a352ee77f418ef3004012cc5693ba390f/discord/http.py#L274
 class Request:
     def __init__(self, method, path, **extra):
         self.method = method
@@ -18,6 +19,7 @@ class Request:
         self.extra = extra
 
 
+# https://github.com/Rapptz/discord.py/blob/6265723a352ee77f418ef3004012cc5693ba390f/discord/http.py#L100
 async def json_or_text(response):
     if response.headers["Content-Type"] in ("application/json", "application/json; charset=UTF-8"):  # pain...
         return await response.json()
