@@ -121,8 +121,21 @@ class Client:
     async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
         return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
 
+    async def user_get_weekly_artist_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
+        fields = {
+            "user": user,
+            "limit": limit,
+            "page": page,
+        }
+        if "start" in extra:
+            fields["from"] = extra["start"]
+
+        if "to" in extra:
+            fields["to"] = extra["to"]
+
+        return await self._request(Request("GET", "user.getWeeklyArtistChart", **fields))
+
     async def user_get_weekly_album_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
-        # TODO: explore other options?
         fields = {
             "user": user,
             "limit": limit,
