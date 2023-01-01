@@ -72,7 +72,6 @@ class Client:
             return data
 
     # > User methods <
-    # TODO: find an alternative to prefixing all methods with user_
     async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1):
         return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=str(recent_tracks), limit=limit, page=page))
 
@@ -136,6 +135,20 @@ class Client:
             fields["to"] = extra["to"]
 
         return await self._request(Request("GET", "user.getWeeklyAlbumChart", **fields))
+
+    async def user_get_weekly_track_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
+        fields = {
+            "user": user,
+            "limit": limit,
+            "page": page,
+        }
+        if "from" in extra:
+            fields["from"] = extra["from"]
+
+        if "to" in extra:
+            fields["to"] = extra["to"]
+
+        return await self._request(Request("GET", "user.getWeeklyTrackChart", **fields))
 
     def _track_shortcut(self, method, **fields):
         valid_fields = ("track", "artist", "mbid", "username", "autocorrect")
