@@ -128,8 +128,8 @@ class Client:
             "limit": limit,
             "page": page,
         }
-        if "from" in extra:
-            fields["from"] = extra["from"]
+        if "start" in extra:
+            fields["from"] = extra["start"]
 
         if "to" in extra:
             fields["to"] = extra["to"]
@@ -142,8 +142,8 @@ class Client:
             "limit": limit,
             "page": page,
         }
-        if "from" in extra:
-            fields["from"] = extra["from"]
+        if "start" in extra:
+            fields["from"] = extra["start"]
 
         if "to" in extra:
             fields["to"] = extra["to"]
