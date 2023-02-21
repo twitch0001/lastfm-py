@@ -1,12 +1,12 @@
 class LastFMException(Exception):
-    """Base Lastf.FM Exception"""
+    """Base Last.FM Exception"""
     def __init__(self, error_code, message):
         self.error_code = error_code
         self.message = message
 
 
-class InvalidParamaters(LastFMException):
-    """An invalid paramater has been passed"""
+class InvalidParameters(LastFMException):
+    """An invalid parameter has been passed"""
     pass
 
 
@@ -16,6 +16,6 @@ class OperationFailed(LastFMException):
 
 
 mapping = {
-    6: InvalidParamaters,
+    6: InvalidParameters,
     8: OperationFailed
 }

@@ -53,7 +53,7 @@ class Client:
         }
 
         params = {
-            "format": "json",  # Would prefer content-type over a query param
+            "format": "json",
             "api_key": self._key,
             "method": request.path
         }
@@ -61,7 +61,9 @@ class Client:
         async with self._session.request(request.method, URL, headers=headers, params=params) as response:
             data = await json_or_text(response)
             log.debug("Method: %s returned status: %s data: %s", request.path, response.status, data)
-            # TODO: check if errors still exist with 200 status
+            if isinstance(data, str):
+                raise LastFMException(0, data)
+
             if 200 <= response.status < 300:
                 return data
 
@@ -73,15 +75,63 @@ class Client:
 
     # > User methods <
     async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1):
+        """Gets a users Friends
+        Parameters
+        ----------
+        user: str
+        recent_tracks: bool
+        limit: int (default: 50)
+        page: int (default: 1)
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=str(recent_tracks), limit=limit, page=page))
 
     async def user_get_info(self, user: str):
+        """
+
+        Parameters
+        ----------
+        user: str
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getInfo", user=user))
 
     async def user_get_loved_tracks(self, user: str, *, limit: int = 50, page: int = 1):
+        """
+
+        Parameters
+        ----------
+        user: str
+        limit: int (default: 50)
+        page: int (default: 1)
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getLovedTracks", user=user, limit=limit, page=page))
 
     async def user_get_personal_tags(self, user: str, tag: str, *, limit: int = 50, page: int = 1, **extra):
+        """
+
+        Parameters
+        ----------
+        user: str
+        tag: str
+        limit: int (default: 50)
+        page: int (default: 1)
+        tagging_type: Optional[str]
+
+        Returns
+        -------
+
+        """
         fields = {
             "user": user,
             "tag": tag,
@@ -94,12 +144,26 @@ class Client:
         return await self._request(Request("GET", "user.getPersonalTags", **fields))
 
     async def user_get_recent_tracks(self, user: str, *, limit: int = 10, page: int = 1, extended: bool = False, **extra):
-        # TODO: explore other options?
+        """
+
+        Parameters
+        ----------
+        user: str
+        limit: int (default: 50)
+        page: int (default: 1)
+        extended: bool (default: False)
+        start: Optional[int]
+        to: Optional[int]
+
+        Returns
+        -------
+        UserRecentTracks
+        """
         fields = {
             "user": user,
             "limit": limit,
             "page": page,
-            "extended": str(extended)  # query params cannot be booleans because
+            "extended": int(extended)  # query params cannot be booleans because
         }
         if "start" in extra: 
             fields["from"] = extra["start"]
@@ -110,18 +174,82 @@ class Client:
         return await self._request(Request("GET", "user.getRecentTracks", **fields))
 
     async def user_get_top_albums(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
+        """
+
+        Parameters
+        ----------
+        user: str
+        period: str (default: "overall")
+        limit: int (default: 10)
+        page: int (default: 1)
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit, period=period, page=page))
 
     async def user_get_top_artists(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
+        """
+
+        Parameters
+        ----------
+        user: str
+        period: str (default: "overall")
+        limit: int (default: 10)
+        page: int (default: 1)
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit, period=period, page=page))
 
     async def user_get_top_tags(self, user: str, *, limit: int = 50):
+        """
+
+        Parameters
+        ----------
+        user: str
+        limit: int (default: 10)
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getTopTags", user=user, limit=limit))
 
     async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1):
+        """
+
+        Parameters
+        ----------
+        user: str
+        period: str (default: "overall")
+        limit: int (default: 10)
+        page: int (default: 1)
+
+        Returns
+        -------
+
+        """
         return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
 
     async def user_get_weekly_artist_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
+        """
+
+        Parameters
+        ----------
+        user: str
+        limit: int (default: 10)
+        page: int (default: 1)
+        start: Optional[int]
+        to: Optional[int]
+
+        Returns
+        -------
+
+        """
         fields = {
             "user": user,
             "limit": limit,
@@ -136,6 +264,20 @@ class Client:
         return await self._request(Request("GET", "user.getWeeklyArtistChart", **fields))
 
     async def user_get_weekly_album_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
+        """
+
+        Parameters
+        ----------
+        user: str
+        limit: int (default: 10)
+        page: int (default: 1)
+        start: Optional[int]
+        to: Optional[int]
+
+        Returns
+        -------
+
+        """
         fields = {
             "user": user,
             "limit": limit,
@@ -150,6 +292,20 @@ class Client:
         return await self._request(Request("GET", "user.getWeeklyAlbumChart", **fields))
 
     async def user_get_weekly_track_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra):
+        """
+
+        Parameters
+        ----------
+        user: str
+        limit: int (default: 10)
+        page: int (default: 1)
+        start: Optional[int]
+        to: Optional[int]
+
+        Returns
+        -------
+
+        """
         fields = {
             "user": user,
             "limit": limit,
@@ -171,12 +327,45 @@ class Client:
         return self._request(Request("GET", method, **params))
     
     async def track_get_info(self, **fields):
+        """
+
+        Parameters
+        ----------
+        fields
+
+        Returns
+        -------
+
+        """
         return await self._track_shortcut("track.getInfo", **fields) 
     
     async def track_get_similar(self, **fields):
+        """
+
+        Parameters
+        ----------
+        fields
+
+        Returns
+        -------
+
+        """
         return await self._track_shortcut("track.getSimilar", **fields) 
 
     async def track_search(self, track: str, *, limit: int = 30, page: int = 1, **extra):
+        """
+
+        Parameters
+        ----------
+        track
+        limit
+        page
+        extra
+
+        Returns
+        -------
+
+        """
         fields = {
             "track": track,
             "page": page,
@@ -188,7 +377,17 @@ class Client:
 
         return await self._request(Request("GET", "track.Search", **fields))
 
-    async def artist_get_info(self, **fields):     
+    async def artist_get_info(self, **fields):
+        """
+
+        Parameters
+        ----------
+        fields
+
+        Returns
+        -------
+
+        """
         valid_fields = ("track", "artist", "mbid", "username", "autocorrect")
         params = {
             k: v for k, v in fields.items() if k in valid_fields
@@ -196,6 +395,16 @@ class Client:
         return await self._request(Request("GET", "artist.getInfo", **params))
     
     async def album_get_info(self, **fields):
+        """
+
+        Parameters
+        ----------
+        fields
+
+        Returns
+        -------
+
+        """
         valid_fields = ("album", "artist", "mbid", "username", "autocorrect", "lang")
         params = {
             k: v for k, v in fields.items() if k in valid_fields
@@ -203,6 +412,16 @@ class Client:
         return await self._request(Request("GET", "album.getInfo", **params))
 
     async def album_get_top_tags(self, **fields):
+        """
+
+        Parameters
+        ----------
+        fields
+
+        Returns
+        -------
+
+        """
         valid_fields = ("album", "artist", "mbid", "autocorrect")
         params = {
             k: v for k, v in fields.items() if k in valid_fields
@@ -210,5 +429,16 @@ class Client:
         return await self._request(Request("GET", "album.getTopTags", **params))
 
     async def album_search(self, album: str, *, limit: int = 30, page: int = 1):
-        return await self._request(Request("GET", "album.Search", album=album, limit=limit, page=page))
+        """
 
+        Parameters
+        ----------
+        album: str
+        limit: int (default: 50)
+        page: int (default: 1)
+
+        Returns
+        -------
+
+        """
+        return await self._request(Request("GET", "album.Search", album=album, limit=limit, page=page))
