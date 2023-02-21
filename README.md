@@ -24,8 +24,17 @@ import asyncio
 client = lastfm.Client('client_key') # Replace with your client key (client_secret is optional)
 
 async def main():
-    recent_tracks = await client.get_recent_tracks("username", limit=5)
+    recent_tracks = await client.user_get_recent_tracks("username", limit=5)
     print(recent_tracks[0].title) # prints the title of the users most recently scrobbled track
 
 asyncio.run(main())
 ```
+
+
+## TO-DO
+A list of methods implemented can be found in [API Methods](docs/methods.md)
+
+Next projects include:
+- Creating models for all the methods
+- Implement Auth methods
+- Implement the rest of the methods
