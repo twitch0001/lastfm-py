@@ -33,3 +33,8 @@ asyncio.run(main())
 
 ## TO-DO
 A list of methods implemented can be found in [API Methods](docs/methods.md)
+
+Next projects include:
+- Creating models for all the methods
+- Implement Auth methods
+- Implement the rest of the methods
