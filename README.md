@@ -26,6 +26,8 @@ client = lastfm.Client('client_key') # Replace with your client key (client_secr
 async def main():
     recent_tracks = await client.user_get_recent_tracks("username", limit=5)
     print(recent_tracks[0].title) # prints the title of the users most recently scrobbled track
+    
+    await client.session.close() # don't forget to close the session once finished with everything
 
 asyncio.run(main())
 ```
