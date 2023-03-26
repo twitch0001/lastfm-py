@@ -57,5 +57,5 @@
 | user.getTopTracks         | Yes          |
 | user.getWeeklyAlbumChart  | Yes          |
 | user.getWeeklyArtistChart | Yes          |
-| user.getWeeklyChartList   | No           |
+| user.getWeeklyChartList   | Yes          |
 | user.getWeeklyTrackChart  | Yes          |
