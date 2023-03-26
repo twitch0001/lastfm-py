@@ -329,6 +329,19 @@ class Client:
 
         return await self._request(Request("GET", "user.getWeeklyTrackChart", **fields))
 
+    async def user_get_weekly_chart_list(self, user: str) -> dict:
+        """Get a list of available charts for the user
+        Parameters
+        ----------
+        user: str - username of the user
+
+        Returns
+        -------
+        dict
+        """
+        return await self._request(Request("GET", "user.getWeeklyChartList", user=user))
+
+
     def _track_shortcut(self, method, **fields):
         valid_fields = ("track", "artist", "mbid", "username", "autocorrect")
         params = {
