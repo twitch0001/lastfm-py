@@ -128,16 +128,16 @@ class Client:
         """
         return await self._request(Request("GET", "user.getLovedTracks", user=user, limit=limit, page=page))
 
-    async def user_get_personal_tags(self, user: str, tag: str, *, limit: int = 50, page: int = 1, **extra) -> dict:
+    async def user_get_personal_tags(self, user: str, tag: str, tagging_type: str, *, limit: int = 50, page: int = 1) -> dict:
         """
 
         Parameters
         ----------
         user: str
         tag: str
+        tagging_type: str
         limit: int (default: 50)
         page: int (default: 1)
-        tagging_type: Optional[str]
 
         Returns
         -------
@@ -147,10 +147,9 @@ class Client:
             "user": user,
             "tag": tag,
             "limit": limit,
-            "page": page
+            "page": page,
+            "taggingtype": tagging_type
         }
-        if "tagging_type" in extra:
-            fields["taggingtype"] = extra["tagging_type"]
 
         return await self._request(Request("GET", "user.getPersonalTags", **fields))
 
