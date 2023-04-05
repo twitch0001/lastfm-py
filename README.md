@@ -1,4 +1,4 @@
-# lastfm-py
+# lastfm-py BETA BRANCH
 An asynchronous Python Last.FM API wrapper
 
 ## Installation

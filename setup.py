@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="lastfm-py",
-    version="0.0.18",
+    version="1.0.0",
     author="twitch7443",
     author_email="twitch7443@pm.me",
     description="An asynchronous LastFM API wrapper",

@@ -5,6 +5,7 @@ import aiohttp
 
 from . import __version__
 from .errors import LastFMException, mapping
+from .models import User, Friends, LovedTracks, RecentTracks, TopAlbums, TopArtists, TopTracks
 
 log = logging.getLogger(__name__)
 
@@ -85,20 +86,20 @@ class Client:
 
     # > User methods <
 
-    async def user_get_info(self, user: str) -> dict:
+    async def user_get_info(self, user: str) -> Optional[User]:
         """
-
         Parameters
         ----------
         user: str
 
         Returns
         -------
-
+        Optional[User]
         """
-        return await self._request(Request("GET", "user.getInfo", user=user))
+        response = await self._request(Request("GET", "user.getInfo", user=user))
+        return User(response["user"])
 
-    async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1) -> dict:
+    async def user_get_friends(self, user: str, *, recent_tracks: bool = False, limit: int = 50, page: int = 1) -> Friends:
         """Gets a users Friends
         Parameters
         ----------
@@ -109,11 +110,12 @@ class Client:
 
         Returns
         -------
-
+        Friends
         """
-        return await self._request(Request("GET", "user.getFriends", user=user, recenttracks=str(recent_tracks), limit=limit, page=page))
+        response = await self._request(Request("GET", "user.getFriends", user=user, recenttracks=str(recent_tracks), limit=limit, page=page))
+        return Friends(response)
 
-    async def user_get_loved_tracks(self, user: str, *, limit: int = 50, page: int = 1) -> dict:
+    async def user_get_loved_tracks(self, user: str, *, limit: int = 50, page: int = 1) -> LovedTracks:
         """
 
         Parameters
@@ -124,9 +126,10 @@ class Client:
 
         Returns
         -------
-
+        LovedTracks
         """
-        return await self._request(Request("GET", "user.getLovedTracks", user=user, limit=limit, page=page))
+        response = await self._request(Request("GET", "user.getLovedTracks", user=user, limit=limit, page=page))
+        return LovedTracks(response)
 
     async def user_get_personal_tags(self, user: str, tag: str, tagging_type: str, *, limit: int = 50, page: int = 1) -> dict:
         """
@@ -150,10 +153,10 @@ class Client:
             "page": page,
             "taggingtype": tagging_type
         }
-
+        # TODO: Make Model
         return await self._request(Request("GET", "user.getPersonalTags", **fields))
 
-    async def user_get_recent_tracks(self, user: str, *, limit: int = 10, page: int = 1, extended: bool = False, **extra) -> dict:
+    async def user_get_recent_tracks(self, user: str, *, limit: int = 10, page: int = 1, extended: bool = False, **extra) -> RecentTracks:
         """
 
         Parameters
@@ -167,6 +170,7 @@ class Client:
 
         Returns
         -------
+        RecentTracks
         """
         fields = {
             "user": user,
@@ -180,9 +184,10 @@ class Client:
         if "to" in extra:
             fields["to"] = extra["to"]
 
-        return await self._request(Request("GET", "user.getRecentTracks", **fields))
+        response = await self._request(Request("GET", "user.getRecentTracks", **fields))
+        return RecentTracks(response)
 
-    async def user_get_top_albums(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1) -> dict:
+    async def user_get_top_albums(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1) -> TopAlbums:
         """
 
         Parameters
@@ -194,11 +199,12 @@ class Client:
 
         Returns
         -------
-
+        TopAlbums
         """
-        return await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit, period=period, page=page))
+        response = await self._request(Request("GET", "user.getTopAlbums", user=user, limit=limit, period=period, page=page))
+        return TopAlbums(response)
 
-    async def user_get_top_artists(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1) -> dict:
+    async def user_get_top_artists(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1) -> TopArtists:
         """
 
         Parameters
@@ -210,9 +216,10 @@ class Client:
 
         Returns
         -------
-
+        TopArtists
         """
-        return await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit, period=period, page=page))
+        response = await self._request(Request("GET", "user.getTopArtists", user=user, limit=limit, period=period, page=page))
+        return TopArtists(response)
 
     async def user_get_top_tags(self, user: str, *, limit: int = 50) -> dict:
         """
@@ -228,7 +235,7 @@ class Client:
         """
         return await self._request(Request("GET", "user.getTopTags", user=user, limit=limit))
 
-    async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1) -> dict:
+    async def user_get_top_tracks(self, user: str, period: str = "overall", *, limit: int = 10, page: int = 1) -> TopTracks:
         """
 
         Parameters
@@ -240,9 +247,10 @@ class Client:
 
         Returns
         -------
-
+        TopTracks
         """
-        return await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
+        response = await self._request(Request("GET", "user.getTopTracks", user=user, limit=limit, period=period, page=page))
+        return TopTracks(response)
 
     async def user_get_weekly_artist_chart(self, user: str, *, limit: int = 10, page: int = 1, **extra) -> dict:
         """
