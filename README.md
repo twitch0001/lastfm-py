@@ -32,6 +32,10 @@ async def main():
 asyncio.run(main())
 ```
 
+## Changes
+- Version 0.0.18:
+  - Made `tagging_type` a required parameter for `user_get_personal_tags`
+
 
 ## TO-DO
 A list of methods implemented can be found in [API Methods](docs/methods.md)
